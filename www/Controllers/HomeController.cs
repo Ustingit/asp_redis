@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
@@ -12,6 +13,8 @@ namespace www.Controllers
 {
 	public class HomeController : Controller
 	{
+		private const string key = "aspnet:{yuryi}:bio";
+
 		private readonly ILogger<HomeController> _logger;
 		private readonly IDistributedCache _cache;
 
@@ -21,9 +24,8 @@ namespace www.Controllers
 			_cache = cache;
 		}
 
-		public IActionResult Index()
+		private string GetSetUserBio()
 		{
-			var key = "aspnet:{yuryi}:bio";
 			var bio = _cache.GetString(key);
 
 			if (string.IsNullOrEmpty(bio))
@@ -33,7 +35,13 @@ namespace www.Controllers
 				_cache.SetString(key, bio);
 			}
 
-			ViewData["AdditionalMessage"] = $"Yuryi, {bio}!";
+			return bio;
+		}
+
+		public IActionResult Index()
+		{
+			ViewData["AdditionalMessage"] = $"Yuryi, {GetSetUserBio()}!";
+			HttpContext.Session.Set("YuryiSessionKeyTest", Encoding.UTF8.GetBytes("Lorem ipsum..."));
 
 			return View();
 		}

@@ -30,6 +30,12 @@ namespace www
 				rco.InstanceName = "MyLocalRedisInstance";
 				rco.Configuration = "127.0.0.1:6379,abortConnect = false,allowAdmin = true";
 			});
+
+			services.AddSession((options) =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(30);
+			});
+
 			services.AddControllersWithViews();
 		}
 
@@ -48,6 +54,7 @@ namespace www
 			}
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
+			app.UseSession();
 
 			app.UseRouting();
 
